@@ -34,11 +34,10 @@ type (
 	BlockchainConfig struct {
 		GanacheURL      string `yaml:"GanacheURL" env:"GANACHE_URL"`
 		ContractAddress string `yaml:"ContractAddress" env:"CONTRACT_ADDRESS"`
-		Port            uint   `yaml:"Port" env:"PORT"`
 	}
 )
 
-func ReadConfi(cfg any, configLocation string) {
+func ReadConfig(cfg any, configLocation string) {
 	if configLocation == "" {
 		configLocation = "file://config/files/config.yaml"
 	}

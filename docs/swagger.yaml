@@ -1,0 +1,267 @@
+basePath: /
+definitions:
+  controller.errorResponse:
+    properties:
+      error_code:
+        type: integer
+      error_message:
+        type: string
+    type: object
+  controller.jsonResponse:
+    properties:
+      code:
+        type: integer
+      data: {}
+      error:
+        $ref: '#/definitions/controller.errorResponse'
+      message:
+        type: string
+    type: object
+  request.ContractValueRequest:
+    properties:
+      from:
+        type: string
+      value:
+        type: integer
+    type: object
+  response.BalanceResponse:
+    properties:
+      address:
+        type: string
+      balance:
+        type: string
+    type: object
+  response.BlockResponse:
+    properties:
+      hash:
+        type: string
+      number:
+        type: string
+      parentHash:
+        type: string
+      timestamp:
+        type: string
+      transactions:
+        items:
+          type: string
+        type: array
+    type: object
+  response.ContractValueResponse:
+    properties:
+      value:
+        type: string
+    type: object
+  response.SetContractValueResponse:
+    properties:
+      transactionHash:
+        type: string
+    type: object
+  response.TransactionResponse:
+    properties:
+      from:
+        type: string
+      gas:
+        type: integer
+      gasPrice:
+        type: string
+      hash:
+        type: string
+      isPending:
+        type: boolean
+      nonce:
+        type: integer
+      to:
+        type: string
+      value:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Blockchain Service.
+  title: Blockchain Service
+  version: 1.0.0
+paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Ping to check health
+      parameters:
+      - description: user that make request
+        in: header
+        name: X-User-Id
+        type: string
+      - default: web
+        description: channel where request comes from
+        in: header
+        name: X-Channel-Id
+        type: string
+      - description: request unique identifier
+        in: header
+        name: X-Request-Id
+        type: string
+      - description: user account
+        in: header
+        name: X-Account-Id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.jsonResponse'
+      summary: Ping
+      tags:
+      - Health
+  /v1/balance/{address}:
+    get:
+      consumes:
+      - application/json
+      description: Get Balance
+      parameters:
+      - default: web
+        description: channel where request comes from
+        in: header
+        name: X-Channel-Id
+        type: string
+      - description: account address
+        in: path
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/controller.jsonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.BalanceResponse'
+              type: object
+      summary: Get Balance
+      tags:
+      - blockchain
+  /v1/block/{number}:
+    get:
+      consumes:
+      - application/json
+      description: Get Block
+      parameters:
+      - default: web
+        description: channel where request comes from
+        in: header
+        name: X-Channel-Id
+        type: string
+      - description: block number
+        in: path
+        name: number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/controller.jsonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.BlockResponse'
+              type: object
+      summary: Get Block
+      tags:
+      - blockchain
+  /v1/contract/value:
+    get:
+      consumes:
+      - application/json
+      description: Get Contract Value
+      parameters:
+      - default: web
+        description: channel where request comes from
+        in: header
+        name: X-Channel-Id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/controller.jsonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ContractValueResponse'
+              type: object
+      summary: Get Contract Value
+      tags:
+      - blockchain
+    post:
+      consumes:
+      - application/json
+      description: Create Contract Value
+      parameters:
+      - default: web
+        description: channel where request comes from
+        in: header
+        name: X-Channel-Id
+        type: string
+      - description: Contract Value
+        in: body
+        name: contracts
+        required: true
+        schema:
+          $ref: '#/definitions/request.ContractValueRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/controller.jsonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SetContractValueResponse'
+              type: object
+      summary: Create Contract Value
+      tags:
+      - blockchain
+  /v1/transaction/{hash}:
+    get:
+      consumes:
+      - application/json
+      description: Get Transaction
+      parameters:
+      - default: web
+        description: channel where request comes from
+        in: header
+        name: X-Channel-Id
+        type: string
+      - description: transaction hash
+        in: path
+        name: hash
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/controller.jsonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.TransactionResponse'
+              type: object
+      summary: Get Transaction
+      tags:
+      - blockchain
+swagger: "2.0"

@@ -2,12 +2,15 @@ package api
 
 import (
 	"github.com/nocturna-ta/blockchain/config"
+	"github.com/nocturna-ta/blockchain/internal/handler/api/controller"
+	"github.com/nocturna-ta/blockchain/internal/usecases"
 	"github.com/nocturna-ta/golib/log"
 	"github.com/nocturna-ta/golib/router"
 )
 
 type Options struct {
-	Cfg config.MainConfig
+	Cfg          config.MainConfig
+	BlockchainUc usecases.BlockchainUseCases
 }
 
 type Handler struct {
@@ -20,7 +23,16 @@ func New(opts *Options) *Handler {
 	handler := &Handler{
 		opts: opts,
 	}
-	handler.myRouter = contr
+	handler.myRouter = controller.New(&controller.Options{
+		Prefix:         opts.Cfg.API.BasePath,
+		Port:           opts.Cfg.Server.Port,
+		ReadTimeout:    opts.Cfg.Server.ReadTimeout,
+		WriteTimeout:   opts.Cfg.Server.WriteTimeout,
+		RequestTimeout: opts.Cfg.API.APITimeout,
+		EnableSwagger:  opts.Cfg.API.EnableSwagger,
+		BlockchainUc:   opts.BlockchainUc,
+	}).RegisterRoute()
+	return handler
 }
 func (h *Handler) Run() {
 	log.Infof("API Listening on %d", h.opts.Cfg.Server.Port)

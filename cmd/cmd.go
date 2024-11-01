@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/nocturna-ta/blockchain/cmd/server"
 	"github.com/nocturna-ta/golib/log"
 	"github.com/spf13/cobra"
 	"os"
@@ -15,7 +16,7 @@ var (
 
 func Execute() {
 	log.SetFormatter("json")
-	rootCmd.AddCommand(nil)
+	rootCmd.AddCommand(server.ServeHttpCmd())
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal("Error: ", err.Error())
